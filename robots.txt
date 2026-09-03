@@ -1,0 +1,3 @@
+# デモサイト。本番では Disallow を外す。
+User-agent: *
+Disallow: /
