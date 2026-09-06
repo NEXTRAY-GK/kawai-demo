@@ -47,6 +47,16 @@
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
+/* --------------------------------------------------- ページの繋がり
+   10枚が1枚に見える。対応していない端末はただの遷移になるだけで、壊れない。
+   ⚠️ file:// では効かない。サーバー越しに見る */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:.2s ease both vtOut}
+::view-transition-new(root){animation:.34s cubic-bezier(.2,.7,.3,1) both vtIn}
+@keyframes vtOut{to{opacity:0}}
+@keyframes vtIn{from{opacity:0;transform:translateY(12px)}}
+@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+
 body{
   margin:0;
   background:var(--paper);
@@ -102,10 +112,24 @@ b,strong{font-weight:600}
 .rel{position:relative}
 .sec{padding-block:var(--sec-y)}
 .sec--tight{padding-block:clamp(56px,8vw,120px)}
-.sec--ink{background:var(--ink);color:var(--paper)}
+.sec--ink{background:var(--ink);color:var(--paper);position:relative;isolation:isolate}
 .sec--ink .t-s{color:#B9C0C4}
 .sec--ink .t-xs{color:var(--steel-2)}
 .sec--paper2{background:var(--paper-2)}
+
+/* 方眼。図面の紙を敷く。墨の面にだけ出し、写真の上には出さない。
+   カーソルの周りだけ点が起きる。⚠️ pointer-events:none を外すとリンクが押せなくなる */
+.sec--ink::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(237,237,232,.8) 1.15px,transparent 1.15px);
+  background-size:30px 30px;
+  -webkit-mask-image:radial-gradient(330px at var(--mx,50%) var(--my,42%),#000 0%,transparent 76%);
+  mask-image:radial-gradient(330px at var(--mx,50%) var(--my,42%),#000 0%,transparent 76%);
+}
+/* カーソルの無い端末では、薄く全面に敷いて止める */
+@media (hover:none){
+  .sec--ink::before{-webkit-mask-image:none;mask-image:none;opacity:.11}
+}
 
 /* 画面の端まで断ち切る */
 .bleed-r{margin-right:calc(-1 * var(--edge))}
@@ -443,6 +467,45 @@ b,strong{font-weight:600}
   .tbl td+td{padding-left:0;padding-top:0}
 }
 
+/* 発注側の言い分。囲わない。弁柄の縦線1本で束ねる */
+.voice{margin:26px 0 22px;padding-left:clamp(16px,1.6vw,24px);
+  border-left:2px solid var(--rust);display:grid;gap:13px;max-width:30em}
+.voice li{font-family:var(--jp-serif);font-weight:600;letter-spacing:.02em;
+  font-size:clamp(15.5px,1.3vw,19px);line-height:1.78;word-break:auto-phrase}
+.sec--ink .voice{border-left-color:var(--rust-lt)}
+
+/* --------------------------------------------------------------- 図
+   写真では絞りの仕組みが写らない。型と板の断面は図で見せる。
+   墨＝型、弁柄＝板。サイト全体の色の決まりをそのまま持ち込んである */
+.dgm{margin:0}
+.dgm svg{width:100%;height:auto;display:block;overflow:visible}
+.dg-t{fill:var(--ink-3)}
+.dg-s{fill:none;stroke:var(--rust);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.dg-a{fill:none;stroke:var(--steel);stroke-width:1.4;stroke-dasharray:5 6;
+  animation:dgflow 1.9s linear infinite}
+.dg-h{fill:none;stroke:var(--steel);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.dg-g{fill:none;stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
+.dg-x{fill:none;stroke:var(--steel-2);stroke-width:1.4;stroke-linecap:round}
+.dg-l text{font-family:var(--mono);font-size:11px;fill:var(--steel);letter-spacing:.1em}
+@keyframes dgflow{to{stroke-dashoffset:-22}}
+.dgm figcaption{margin-top:14px;font-size:12.5px;line-height:1.9;color:var(--steel);
+  letter-spacing:.06em;border-top:1px solid var(--line);padding-top:12px}
+.sec--ink .dg-t{fill:var(--ink-3)}
+.sec--ink .dg-s{stroke:var(--rust-lt)}
+.sec--ink .dgm figcaption{border-top-color:var(--line-i);color:var(--steel-2)}
+
+/* 工程割り。断面が1つずつ深くなる */
+.stps{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(9px,1.2vw,18px)}
+.stp{margin:0}
+.stp svg{width:100%;height:auto;display:block;background:var(--paper-3);
+  border:1px solid var(--line-2)}
+.stp figcaption{margin-top:12px;font-size:12.5px;line-height:1.7;letter-spacing:.05em}
+.stp figcaption span{display:block;font-family:var(--mono);font-size:10px;color:var(--rust);
+  letter-spacing:.2em;margin-bottom:5px}
+@media (max-width:639px){
+  .stps{grid-template-columns:1fr 1fr;gap:16px}
+}
+
 /* --------------------------------------------------------------- 注記 */
 .note{
   border-left:2px solid var(--rust);padding:clamp(20px,2.2vw,28px) clamp(20px,2.4vw,32px);
@@ -512,18 +575,40 @@ p + .call-tel{margin-top:clamp(22px,2.6vw,34px)}
   border-top:1px solid var(--line-i);padding-block:26px 30px;
   font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--steel)}
 
-/* --------------------------------------------------------------- デモの断り */
-.demo-bar{
-  position:fixed;left:0;right:0;bottom:0;z-index:80;
-  display:flex;align-items:center;justify-content:space-between;gap:18px;
-  padding:11px var(--gut);background:var(--ink-2);color:var(--steel-2);
-  border-top:1px solid var(--line-i);font-size:11.5px;line-height:1.7;letter-spacing:.04em;
+/* --------------------------------------------------------------- デモの断り
+   ⚠️ 2026-09-06、代表の指示で全幅の帯をやめ、右下の小さな札にした。
+      断りの中身は消していない。札を押すと全文が開く（popover、JS 0行） */
+.demo-tag{
+  position:fixed;right:14px;bottom:14px;z-index:80;
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+  color:var(--steel-2);background:rgba(14,17,19,.86);
+  border:1px solid var(--line-i);padding:7px 11px;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  transition:color .3s,border-color .3s;
 }
-.demo-bar b{color:var(--paper);font-weight:500}
-.demo-bar button{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--steel-2);
-  border:1px solid var(--line-i);padding:6px 12px;white-space:nowrap;transition:color .3s,border-color .3s}
-.demo-bar button:hover{color:var(--paper);border-color:var(--paper)}
-@media (max-width:639px){.demo-bar{font-size:10.5px;padding:9px 16px}}
+.demo-tag::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--rust-lt)}
+.demo-tag:hover{color:var(--paper);border-color:var(--steel)}
+
+.demo-note{
+  border:1px solid var(--line-i);padding:clamp(22px,3vw,32px);
+  background:var(--ink-2);color:var(--steel-2);
+  max-width:min(430px,calc(100vw - 32px));
+  font-size:13px;line-height:1.95;letter-spacing:.03em;
+  opacity:1;transform:none;
+  transition:opacity .3s,transform .3s,overlay .3s allow-discrete,display .3s allow-discrete;
+}
+@starting-style{.demo-note:popover-open{opacity:0;transform:translateY(10px)}}
+.demo-note:not(:popover-open){opacity:0;transform:translateY(10px)}
+.demo-note b{color:var(--paper);font-weight:500}
+.demo-note .demo-by{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;
+  color:var(--steel);margin-top:14px}
+.demo-note button{margin-top:20px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+  color:var(--steel-2);border:1px solid var(--line-i);padding:7px 14px;
+  transition:color .3s,border-color .3s}
+.demo-note button:hover{color:var(--paper);border-color:var(--paper)}
+.demo-note::backdrop{background:rgba(10,13,15,.66)}
+@media (prefers-reduced-motion:reduce){.demo-note{transition:none}}
 
 /* --------------------------------------------------------------- 出方 */
 .rv{opacity:0;transform:translateY(22px);
@@ -539,4 +624,7 @@ p + .call-tel{margin-top:clamp(22px,2.6vw,34px)}
   .cue i::after{animation:none}
   .marq-t{animation:none!important}
   .hero-bg img,.ph-bg img{transform:none!important}
+  /* 方眼は追わせない。薄く敷いたまま止める */
+  .sec--ink::before{-webkit-mask-image:none!important;mask-image:none!important;opacity:.11;transition:none}
+  .dg-a{animation:none!important}
 }

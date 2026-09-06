@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- 和文も読む。Google Fonts は文字の範囲ごとに分けて配るので、1ページぶんだけ落ちてくる -->
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@600&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260905a">
+<link rel="stylesheet" href="assets/site.css?v=20260906a">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -95,7 +95,12 @@
     <p class="sec-no"><span>01</span>&nbsp;&nbsp;何をしているか</p>
     <div class="two two--l two--top">
       <h2 class="t-l rv">難しいのは、<br>薄いこと。</h2>
-      <p class="t-s rv rv-1" style="max-width:30em">板が薄いほど、絞れば割れ、押さえればしわが寄ります。逃げ場が狭い。カワイ製作所が引き受けてきたのは、その狭いところです。</p>
+      <div>
+        <p class="t-s rv rv-1" style="max-width:30em">板が薄いほど、絞れば割れ、押さえればしわが寄ります。逃げ場が狭い。カワイ製作所が引き受けてきたのは、その狭いところです。</p>
+        <p class="t-s rv rv-1" style="max-width:30em;margin-top:18px">プレス加工の相談は、たいていこの3つのどれかで始まります。</p>
+        <ul class="voice rv rv-2"><li>「薄いので、割れると言われた」</li><li>「工程ごとに会社が分かれて、納期が読めない」</li><li>「急ぎが重なって、どこも手が空いていない」</li></ul>
+        <p class="t-s rv rv-2" style="max-width:30em">下に置いた3つが、その答えです。</p>
+      </div>
     </div>
   </div>
   <div class="wrap"><div class="stack"><article class="st">
@@ -236,16 +241,14 @@
 </footer>
 
 <!-- ▼ デモサイトのときだけ。本番では common.py の DEMO を False にする -->
-<div class="demo-bar" id="demobar">
-  <span><b>これはデモサイトです。</b>掲載内容と写真は公開情報をもとにした制作イメージで、実際の営業内容とは異なる場合があります。制作：NextRay</span>
-  <button id="demoClose" type="button">CLOSE</button>
+<button class="demo-tag" type="button" popovertarget="demoNote" title="これはデモサイトです。掲載内容と写真は公開情報をもとにした制作イメージで、実際の営業内容とは異なる場合があります。制作：NextRay">デモサイト</button>
+<div class="demo-note" id="demoNote" popover>
+  <p><b>これはデモサイトです。</b>掲載内容と写真は公開情報をもとにした制作イメージで、実際の営業内容とは異なる場合があります。</p>
+  <p class="demo-by">制作：NextRay</p>
+  <button type="button" popovertarget="demoNote" popovertargetaction="hide">閉じる</button>
 </div>
-<script>
-(function(){var b=document.getElementById('demobar'),c=document.getElementById('demoClose');
-if(c){c.addEventListener('click',function(){b.hidden=true});}})();
-</script>
 <!-- ▲ -->
 
-<script src="assets/site.js?v=20260905a"></script>
+<script src="assets/site.js?v=20260906a"></script>
 </body>
 </html>

@@ -68,6 +68,30 @@
   var marq = d.querySelector('.marq-t');
   if (marq && !calm) marq.innerHTML += marq.innerHTML;
 
+  /* ---------- 方眼（カーソルの周りだけ点が起きる） ----------
+     CSS の --mx/--my を書き換えるだけ。画面に入っている面しか触らない。
+     ⚠️ pointermove を直に書くと毎ミリ秒走る。必ず rAF で間引く。
+     ⚠️ カーソルの無い端末（hover:none）と「視差効果を減らす」のときは何もしない。
+        CSS 側で薄い方眼が全面に出る形にしてある。 */
+  var inks = d.querySelectorAll('.sec--ink');
+  if (inks.length && !calm && matchMedia('(hover:hover)').matches) {
+    var mx = 0, my = 0, mtick = false;
+    addEventListener('pointermove', function (e) {
+      mx = e.clientX; my = e.clientY;
+      if (mtick) return;
+      mtick = true;
+      requestAnimationFrame(function () {
+        mtick = false;
+        Array.prototype.forEach.call(inks, function (s) {
+          var r = s.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > innerHeight) return;
+          s.style.setProperty('--mx', (mx - r.left) + 'px');
+          s.style.setProperty('--my', (my - r.top) + 'px');
+        });
+      });
+    }, { passive: true });
+  }
+
   /* ---------- スクロール（1本のrAFに集約） ---------- */
   var hd = d.getElementById('hd');
   var heroImg = d.querySelector('.hero-bg img');
