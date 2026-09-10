@@ -151,7 +151,7 @@ python3 _build/grade_images.py   # 写真27点を調子に揃え直す（images/
 - [ ] `_build/common.py` の `DEMO` を `False` にする
 - [ ] `robots.txt` の `Disallow: /` を外す
 - [ ] 本文の「⚠️ 制作前に確認すること」7か所を、実際の条件に書き換える
-- [ ] `_build/common.py` の `BASE` を本番ドメインに差し替える（いまは `https://nextrayjp.github.io/kawai-demo/`）
+- [ ] `_build/common.py` の `BASE` を本番ドメインに差し替える（いまは `https://nextray-gk.github.io/kawai-demo/`）
 - [ ] `sitemap.xml` を置く
 - [ ] 問い合わせフォームの宛先・自動返信・送信の仕組みを入れる（いまは仮実装、宛先も仮）
 - [ ] 写真を差し替える
